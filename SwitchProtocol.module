@@ -98,7 +98,7 @@ class SwitchProtocol extends WireData implements Module, ConfigurableModule {
         $field->name = 'markup';
         if ($protocols) {
             if (!is_array($protocols)) {
-            	$field->label = __('Syntax Error');
+            $field->label = __('Syntax Error');
                 $markup .= __('$config->protocols fails due to an error.');
             } else {
                 $markup .= "<p>Loaded values from \$config->protocols (/site/config.php)</p>";
@@ -112,7 +112,7 @@ class SwitchProtocol extends WireData implements Module, ConfigurableModule {
                 $markup .= "</pre></code>";
             }
         } else {
-			$field->label = __('Place the code below in /site/config.php and configure it.');
+            $field->label = __('Place the code below in /site/config.php and configure it.');
             $markup .= file_get_contents(__DIR__ . '/text-inactive.txt');
         }
         $field->value = $markup;
