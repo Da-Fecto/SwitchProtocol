@@ -1,0 +1,120 @@
+<?php
+
+/**
+ * ProcessWire 'Switch Protocol' module
+ * Switch scheme/protocol (http/https/both) on a per domain base, overwriting template 
+ * settings.
+ *
+ * @author Martijn Geerts (Calago) mgeerts@calago.nl
+ *
+ * ProcessWire 2.x
+ * Copyright (C) 2014 by Ryan Cramer
+ * Licensed under GNU/GPL v2, see LICENSE.TXT
+ *
+ * http://processwire.com
+ *
+ */
+
+class SwitchProtocol extends WireData implements Module, ConfigurableModule {
+
+    /**
+     * getModuleInfo is a module required by all modules to tell ProcessWire about them
+     *
+     * @return array
+     *
+     */
+    public static function getModuleInfo() {
+        return array(
+            'title' => 'Switch Protocol',
+            'version' => '0.0.1',
+            'summary' => __('Switch scheme/protocol (http/https/both) on a per domain base, overwriting template settings.'),
+            'href' => 'http://processwire.com',
+            'singular' => true,
+            'author' => "Martijn Geerts",
+            'autoload' => true,
+            'icon' => 'globe',
+            );
+    }
+
+    /**
+     * Initialize the module
+     *
+     * ProcessWire calls this when the module is loaded. For 'autoload' modules, this will be called
+     * when ProcessWire's API is ready. As a result, this is a good place to attach hooks.
+     *
+     */
+    public function init() {
+        $this->protocols = $this->config->protocols;
+        $this->httpHost = $this->config->httpHost;
+        if (is_array($this->protocols)) {
+            $this->addHookBefore("Page::loaded", $this, 'beforePageLoaded');
+        }
+    }
+
+    // Config settings protocols
+    protected $protocols = null;
+
+    // Hostname
+    protected $httpHost = null;
+
+    /**
+     * Set template setting https
+     *
+     *  0 = HTTP or HTTPS
+     *  1 = HTTPS only
+     * -1 = HTTP only
+     */
+    protected function beforePageLoaded(HookEvent $event) {
+
+        $page = $event->object;
+        $template = $page->template;
+        $protocol = isset($this->protocols[$this->httpHost]) ? $this->protocols[$this->httpHost] : null;
+
+        if (!$protocol) return;
+
+        // Global based
+        if (is_int($protocol)) {
+            $template->set('https', $protocol);
+            return;
+        }
+
+        // Template based
+        if (is_array($protocol)) {
+             $protocol = isset($protocol[1][$template->name]) ? (int) $protocol[1][$template->name] : (int) $protocol[0];
+            $template->set('https', $protocol);
+        }
+    }
+
+    /**
+     * Return help text
+     *
+     */
+    public static function getModuleConfigInputfields(array $data) {
+        $wrapper = new InputfieldWrapper();
+        $protocols = wire('config')->protocols;
+        $markup = '';
+        // ask for their full name
+        $field = wire('modules')->get('InputfieldMarkup');
+        $field->name = 'markup';
+        if ($protocols) {
+            if (!is_array($protocols)) {
+                $markup .= __('$config->protocols fails due to an error.');
+            } else {
+                $markup .= "<p>Loaded values from \$config->protocols (/site/config.php)</p>";
+                $markup .= "<code style='font-size: 12px'><pre>";
+                $markup .= "/**\n";
+                $markup .= " *  0 = HTTP or HTTPS\n";
+                $markup .= " *  1 = HTTPS\n";
+                $markup .= " * -1 = HTTP only\n";
+                $markup .= " */\n\n";
+                $markup .= wireEncodeJSON($protocols, true, true);
+                $markup .= "</pre></code>";
+            }
+        } else {
+            $markup .= file_get_contents(__DIR__ . '/text-inactive.txt');
+        }
+        $field->value = $markup;
+        $wrapper->add($field);
+        return $wrapper;
+    }
+}
