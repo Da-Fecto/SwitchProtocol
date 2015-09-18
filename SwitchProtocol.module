@@ -2,7 +2,7 @@
 
 /**
  * ProcessWire 'Switch Protocol' module
- * Switch scheme/protocol (http/https/both) on a per domain base, overwriting template 
+ * Switch scheme/protocol (http/https/both) on a per domain base, overwriting template
  * settings.
  *
  * @author Martijn Geerts (Calago) mgeerts@calago.nl
@@ -98,6 +98,7 @@ class SwitchProtocol extends WireData implements Module, ConfigurableModule {
         $field->name = 'markup';
         if ($protocols) {
             if (!is_array($protocols)) {
+            	$field->label = __('Syntax Error');
                 $markup .= __('$config->protocols fails due to an error.');
             } else {
                 $markup .= "<p>Loaded values from \$config->protocols (/site/config.php)</p>";
@@ -111,6 +112,7 @@ class SwitchProtocol extends WireData implements Module, ConfigurableModule {
                 $markup .= "</pre></code>";
             }
         } else {
+			$field->label = __('Place the code below in /site/config.php and configure it.');
             $markup .= file_get_contents(__DIR__ . '/text-inactive.txt');
         }
         $field->value = $markup;
