@@ -80,7 +80,7 @@ class SwitchProtocol extends WireData implements Module, ConfigurableModule {
 
         // Template based
         if (is_array($protocol)) {
-             $protocol = isset($protocol[1][$template->name]) ? (int) $protocol[1][$template->name] : (int) $protocol[0];
+            $protocol = isset($protocol[1][$template->name]) ? (int) $protocol[1][$template->name] : (int) $protocol[0];
             $template->set('https', $protocol);
         }
     }
