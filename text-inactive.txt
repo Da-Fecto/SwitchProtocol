@@ -1,0 +1,57 @@
+<code style='font-size: 12px'>
+<pre>
+/**
+ * Set Scheme/Protocol
+ *
+ * Set communication protocol depending on domain name. The setting will overwrite
+ * the template settings 'Scheme/Protocol' under the tab 'URLs'. When the value of the
+ * associative array is an integer the protocol is set globally for all templates.
+ *
+ * # integers
+ *  0 = HTTP or HTTPS
+ *  1 = HTTPS only
+ * -1 = HTTP only
+ *
+ * Setting Scheme/Protocol only Global
+ *
+ * $config->protocols = array(
+ * 	  'local.domain.ext' => 0,
+ * 	  'staging.domain.ext' => 1,
+ * 	  'staging.live.ext' => -1,
+ * );
+ *
+ * Setting Scheme/Protocol Global and on a template base.
+ *
+ * $config->protocols = array(
+ *     // Global HTTP or HTTPS only, and overwrite on a per template base
+ *     'local.domain.ext' => array(0, array(
+ *         'basic-page' => 1,
+ *         'admin' => 0,
+ *         'other-template' => -1
+ *         )
+ *     ),
+ *     // Global HTTP only, and overwrite on a per template base
+ *     'staging.domain.ext' => array(-1, array(
+ *         'basic-page' => 1,
+ *         'admin' => 0,
+ *         'other-template' => -1
+ *         )
+ *     ),
+ *     // Global HTTPS only, and overwrite on a per template base
+ *     'staging.live.ext' => array(1, array(
+ *         'basic-page' => -1,
+ *         'admin' => 0,
+ *         'other-template' => 0
+ *         )
+ *     ),
+ * );
+ *
+ */
+
+$config->protocols = array(
+    'local.domain.ext' => 0,
+    'staging.domain.ext' => 1,
+    'staging.live.ext' => -1,
+);
+</pre>
+</code>
